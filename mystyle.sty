@@ -1,0 +1,350 @@
+\ProvidesPackage{mystyle}
+
+% XeLaTeX compatibility - inputenc and fontenc not needed
+\RequirePackage[ngerman]{babel}
+\RequirePackage{csquotes} % Recommended for babel/polyglossia with biblatex
+\RequirePackage{graphicx}
+\RequirePackage{wrapfig}
+\RequirePackage{needspace} % Prevent subsections from splitting across pages
+\RequirePackage{caption}
+\captionsetup{font={stretch=1,singlespacing}, labelfont=bf, justification=raggedright, singlelinecheck=false} % Legenden 1,0-zeilig, Label fett, linksbündig
+\addto\captionsngerman{%
+  \renewcommand{\figurename}{Abb.}%
+  \renewcommand{\tablename}{Tab.}%
+}
+\RequirePackage{subcaption}
+\captionsetup[sub]{font={stretch=1,singlespacing}, labelfont=bf} % Sublegenden auch 1,0-zeilig
+\RequirePackage{pdfpages}
+\RequirePackage{placeins}
+\RequirePackage{booktabs}
+\RequirePackage{tocloft}
+\setlength{\cftchapnumwidth}{2.5em} % Width of the box for chapter numbers in TOC
+\setlength{\cftsecnumwidth}{3em}    % Width for sections
+\setlength{\cftsubsecnumwidth}{3.5em} % Width for subsections
+
+% FORMATTING 
+% Font - Arial (requires XeLaTeX)
+\RequirePackage{fontspec}
+\setmainfont{Arial} 
+% Zeilenabstand
+\RequirePackage{setspace}
+\setstretch{1.5} % 1,5-zeilig gemäß Vorgaben (Word-Stil)
+% Schriftgröße
+\newcommand{\customeighteenpt}{\fontsize{18}{20}\selectfont}
+\newcommand{\customfourteenpt}{\fontsize{14}{16.8}\selectfont}
+% Kapitelüberschriften: 14pt und fett, ohne "Kapitel", Format: 1. Einleitung
+\RequirePackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\fontsize{14}{16.8}\bfseries}{\thechapter.}{1em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+% Ensure TOC shows chapter numbers with period
+\makeatletter
+% Modify how chapters are written to TOC to include period
+\let\old@chapter\@chapter
+\def\@chapter[#1]#2{%
+  \ifnum \c@secnumdepth >\m@ne
+    \refstepcounter{chapter}%
+    \typeout{\@chapapp\space\thechapter.}%
+    \def\@tempa{#1}%
+    \ifx\@tempa\@empty
+      \addtocontents{toc}{\protect\contentsline{chapter}{\protect\numberline{\thechapter.~}#2}{\thepage}{chapter.\thechapter}}%
+      \chaptermark{#2}%
+    \else
+      \addtocontents{toc}{\protect\contentsline{chapter}{\protect\numberline{\thechapter.~}#1}{\thepage}{chapter.\thechapter}}%
+      \chaptermark{#1}%
+    \fi
+  \fi
+  \addtocontents{lof}{\protect\addvspace{10\p@}}%
+  \addtocontents{lot}{\protect\addvspace{10\p@}}%
+  \if@twocolumn
+    \@topnewpage[\@makechapterhead{#2}]%
+  \else
+    \@makechapterhead{#2}%
+    \@afterheading
+  \fi}
+\makeatother
+
+% Section-Überschriften: 12pt, nicht fett, wie Text (1.1., 1.2., etc.)
+\titleformat{\section}
+  {\normalfont\fontsize{12}{18}}{\thesection.}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{18}}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{18}}{\thesubsubsection.}{1em}{}
+% Seitenränder: links/rechts 2,2cm, oben 3,2cm, unten 3,0cm
+% Mit includehead: Textbeginn = top + headheight(15pt) + headsep(1.1cm) = 3,2cm
+\RequirePackage[includehead, headheight=15pt, headsep=1.1cm, left=2.2cm, right=2.2cm, top=1.58cm, bottom=3.0cm]{geometry}
+
+\RequirePackage{fancyhdr}
+%\fancypagestyle{plain}
+\pagestyle{fancy}
+\fancyhf{} % Clear header and footer
+\fancyhead[C]{\thepage} % Centered page number in the header
+\renewcommand{\headrulewidth}{0pt} % No line under header
+\fancypagestyle{plain}{
+    \fancyhf{}  % clear all header and footer fields
+    \fancyhead[C]{\thepage}  % Center the page number in the header
+    \renewcommand{\headrulewidth}{0pt}  % Remove the header line
+%    \renewcommand{\footrulewidth}{0pt}  % Remove the footer line
+}
+
+% Anzahl möglicher Unterkapitel 
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+\newcommand{\subfigheight}{0.8\linewidth}
+% Global width for wrapfigures
+\newcommand{\wrapfigwidth}{0.3\textwidth}
+% LITERATURVERZEICHNIS
+%\RequirePackage[backend=biber, style=authoryear]{biblatex}
+%\DeclareNameAlias{sortname}{family-given}
+%\DeclareNameAlias{default}{family-given} % Apply the same format to all names
+
+\RequirePackage[backend=biber, style=authoryear, dashed=false]{biblatex}
+
+% Prevent period at end of bibliography entries
+% Make finentrypunct empty and clear punctuation before finishing
+\renewcommand{\finentrypunct}{}
+\renewbibmacro{finentry}{%
+  \newunit
+  \finentry
+}
+
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+% Absatzabstand im Literaturverzeichnis max 12pt
+\setlength{\bibitemsep}{12pt}
+% Remove indentation and ensure left alignment
+\setlength{\bibhang}{0pt}
+\setlength{\biblabelsep}{0pt}
+\setlength{\labelwidth}{0pt}
+% Redefine bibliography environment for left alignment
+\defbibenvironment{bibliography}
+  {\list{}
+     {\setlength{\leftmargin}{0pt}%
+      \setlength{\itemindent}{0pt}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}%
+      \setlength{\labelsep}{0pt}%
+      \setlength{\labelwidth}{0pt}}%
+      \renewcommand*{\makelabel}[1]{##1\hss}}
+  {\endlist}
+  {\item}
+% Define title format to be plain
+\DeclareFieldFormat{title}{#1}             % Regular articles, books
+\DeclareFieldFormat[article]{title}{#1}    % Articles
+\DeclareFieldFormat[inbook]{title}{#1}     % Book chapters
+\DeclareFieldFormat[incollection]{title}{#1}  % Collection entries
+\DeclareFieldFormat[inproceedings]{title}{#1} % Conference proceedings
+\DeclareFieldFormat[phdthesis]{title}{#1}  % PhD thesis titles without quotes
+% Customizing the format for names to appear as "Lastname Initials"
+\DeclareNameAlias{sortname}{family-given}
+\DeclareNameAlias{default}{family-given}
+\DeclareNameFormat{family-given}{%
+  \namepartfamily % Outputs the family name
+  \ifdefvoid{\namepartgiven}{}{%
+    \addspace
+    \namepartgiven % Outputs the initial of the given name
+  }%
+  \ifthenelse{\value{listcount}<\value{liststop}}
+    {\addcomma\space} % Adds a comma and space if not the last name
+    {.} % Adds a dot after the last name
+}
+
+% Plain text for journal titles
+\DeclareFieldFormat{journaltitle}{#1}
+\DeclareFieldFormat{booktitle}{#1}
+
+
+% Customizing the bibliography driver for articles
+\DeclareBibliographyDriver{article}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\addperiod\space}%
+  \printfield{journaltitle}%
+  \setunit{\addspace}%
+  \printfield{year}%
+  \setunit{\addsemicolon\space}%
+  \printfield{volume}%
+  \setunit{\addcolon\space}%
+  \printfield{pages}%
+  \usebibmacro{finentry}}
+
+% Anpassung des Formats für Bücher
+% Format: Author. Title. City: Publisher, year (no period after year)
+% Note: biblatex converts 'address' to 'location' internally, so we check location first
+\DeclareBibliographyDriver{book}{%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\adddot\space}%
+  \iflistundef{location}{%
+    \iffieldundef{address}{}{%
+      \printfield{address}%
+      \setunit{\addcolon\space}%
+    }%
+  }{%
+    \printlist{location}%
+    \setunit{\addcolon\space}%
+  }%
+  \printlist{publisher}%
+  \setunit{\addcomma\space}%
+  \printfield{year}%
+  \usebibmacro{finentry}%
+}
+
+\DeclareBibliographyDriver{incollection}{%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\adddot\space}%
+  \printtext{in: }%
+  \printnames{editor}%
+  \setunit{\addspace}%
+  \printtext{Hrsg\adddot}%
+  \setunit{\addspace}%
+  \printfield{booktitle}%
+  \setunit{\adddot\space}%
+  \printlist{location}%
+  \setunit{\addcolon\space}%
+  \printlist{publisher}%
+  \setunit{\addcomma\space}%
+  \printfield{year}%
+  \setunit{\addcolon\space}%
+  \printfield{pages}%
+  \finentry
+}
+
+% Suppress type field for techreport and report entries to remove "Techn. Ber."
+\DeclareFieldFormat[techreport]{type}{}
+\DeclareFieldFormat[report]{type}{}
+
+\DeclareBibliographyDriver{techreport}{%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\adddot\space}%
+  \printlist{institution}%
+  \setunit{\addcomma\space}%
+  \printfield{year}%
+  \usebibmacro{finentry}%
+}
+
+\DeclareBibliographyDriver{report}{%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\adddot\space}%
+  \printlist{institution}%
+  \setunit{\addcomma\space}%
+  \printfield{year}%
+  \usebibmacro{finentry}%
+}
+
+\DeclareBibliographyDriver{phdthesis}{%
+  \printnames{author}%
+  \setunit{\adddot\space}%
+  \printfield{title}%
+  \setunit{\adddot\space}%
+  \printlist{school}%
+  \setunit{\addcomma\space}%
+  \printfield{year}%
+  \usebibmacro{finentry}%
+}
+
+\addbibresource{Bibliographie/references.bib}
+\let\oldcite\cite
+\renewcommand{\cite}[1]{\parencite{#1}}
+
+% Ändere "Literatur" zu "Literaturverzeichnis"
+\DefineBibliographyStrings{ngerman}{%
+  bibliography = {Literaturverzeichnis},
+  references = {Literaturverzeichnis},
+  techreport = {} % Remove "Techn. Ber." string
+}
+\defbibheading{bibnumbered}{%
+  \chapter{Literaturverzeichnis}%
+}
+
+
+
+
+\RequirePackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,       % Farbe für interne Links
+  citecolor=black,
+  filecolor=black,   % Farbe für Dateien
+  urlcolor=black        % Farbe für URLs
+}
+\RequirePackage{xcolor}
+\RequirePackage{float}
+% Make table and figure numbering continuous (not section-based)
+\makeatletter
+% Remove table and figure counters from section and chapter reset
+\@removefromreset{table}{section}
+\@removefromreset{figure}{section}
+% Also ensure they're not reset by chapter
+\@removefromreset{table}{chapter}
+\@removefromreset{figure}{chapter}
+% Ensure continuous numbering format (just arabic number, no section prefix)
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+\makeatother
+
+% Tabellen 1,0-zeilig
+\AtBeginEnvironment{tabular}{\singlespacing}
+\AtBeginEnvironment{table}{\singlespacing}
+
+% Absatzabstand max 12pt
+\setlength{\parskip}{12pt}
+\setlength{\parindent}{0pt}
+
+% Blocksatz und tiefschwarzes Schriftbild sicherstellen
+\RequirePackage{microtype} % Verbesserter Blocksatz
+\RequirePackage{etoolbox}
+
+% Verzeichnisse im Inhaltsverzeichnis mit Nummerierung
+\makeatletter
+% Format für Abbildungsverzeichnis: "Abbildung 1: <Title>"
+% Use tocloft to format list of figures
+\renewcommand{\cftfigpresnum}{Abbildung }  % Präfix vor der Nummer
+\renewcommand{\cftfigaftersnum}{:}        % Doppelpunkt nach der Nummer
+\setlength{\cftfignumwidth}{3.5cm}         % Breite für Nummer + Präfix anpassen
+\setlength{\cftfigindent}{0cm}            % Einzug
+% Format für Tabellenverzeichnis: "Tabelle 1: <Title>"
+% Use tocloft to format list of tables
+\renewcommand{\cfttabpresnum}{Tabelle }  % Präfix vor der Nummer
+\renewcommand{\cfttabaftersnum}{:}        % Doppelpunkt nach der Nummer
+\setlength{\cfttabnumwidth}{3.5cm}         % Breite für Nummer + Präfix anpassen
+\setlength{\cfttabindent}{0cm}            % Einzug
+% Disable tocloft's title formatting for list of figures/tables
+% This ensures they use the normal chapter formatting (14pt, bold, with number)
+\renewcommand{\cfttoctitlefont}{\normalfont\fontsize{14}{16.8}\bfseries}
+\renewcommand{\cftloftitlefont}{\normalfont\fontsize{14}{16.8}\bfseries}
+\renewcommand{\cftlottitlefont}{\normalfont\fontsize{14}{16.8}\bfseries}
+\renewcommand{\cftaftertoctitle}{}
+\renewcommand{\cftafterloftitle}{}
+\renewcommand{\cftafterlottitle}{}
+\AtBeginDocument{
+  \makeatletter
+  \renewcommand{\listoffigures}{%
+    \clearpage
+    \refstepcounter{chapter}%
+    \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter.~}Abbildungsverzeichnis}%
+    \chapter*{\thechapter.\space Abbildungsverzeichnis}%
+    \@mkboth{\listfigurename}{\listfigurename}%
+    \@starttoc{lof}%
+  }
+  \renewcommand{\listoftables}{%
+    \clearpage
+    \refstepcounter{chapter}%
+    \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter.~}Tabellenverzeichnis}%
+    \chapter*{\thechapter.\space Tabellenverzeichnis}%
+    \@mkboth{\listtablename}{\listtablename}%
+    \@starttoc{lot}%
+  }
+  \makeatother
+}

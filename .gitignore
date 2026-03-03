@@ -1,0 +1,34 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.xdv
+*.dvi
+*.ps
+*.idx
+*.ind
+*.ilg
+*-blx.bib
+*.bak
+
+# Compiled PDFs (keep CV and main PDF — comment out if you want to track them)
+# main.pdf
+# CV_Mustermann.pdf
+
+# Editor files
+.DS_Store
+.vscode/
+.cursor/
+.idea/
+*.swp
+*~

@@ -1,0 +1,29 @@
+\documentclass[twoside, 12pt, a4paper]{report}
+% Use the custom style file
+\usepackage{mystyle}
+
+% DOKUMENT
+\begin{document}
+
+\input{titlepage}
+
+\setcounter{page}{3}
+\tableofcontents
+
+% Fügen Sie hier Ihre Kapitel ein
+
+\input{Kapitel/Einleitung}
+\input{Kapitel/Hauptteil}
+\input{Kapitel/Diskussion}
+\input{Kapitel/Kurzzusammenfassung}
+% \input{Kapitel/Danksagung} % optional acknowledgements
+\listoffigures
+\listoftables
+
+\printbibliography[heading=bibnumbered]
+\input{Kapitel/Eigenanteil}
+\clearpage
+\refstepcounter{chapter}
+\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter.~}Lebenslauf}
+\includepdf[pages=1]{CV_Mustermann.pdf}
+\end{document}
